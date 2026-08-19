@@ -124,17 +124,18 @@ class BinarySearchTree:
                 next_node.right = node.right
                 del node
                 return "Done"
+def main():
+    bst = BinarySearchTree()
+    bst.add(3)
+    bst.add(6)
+    bst.add(14)
+    bst.add(2)
 
-bst = BinarySearchTree()
-bst.add(3)
-bst.add(6)
-bst.add(14)
-bst.add(2)
+    print(bst.find_max(bst.root))  
+    print(bst.find_min(bst.root)) 
+    print(bst.find(3))           
+    print(bst.find(50))       
+    print(bst.remove(3))     
+    print(bst.remove(14))   
 
-print(bst.find_max(bst.root))  
-print(bst.find_min(bst.root)) 
-print(bst.find(3))           
-print(bst.find(50))       
-print(bst.remove(3))     
-print(bst.remove(14))   
-
+main()
