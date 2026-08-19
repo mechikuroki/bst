@@ -24,6 +24,10 @@ class BinarySearchTree:
                 self.add(data, node.right)
         return node
 
+# al final como en el remove de un nodo con dos hijos usé un while porque necesitaba saber el padre para encontrar el reemplazo del nodo
+# no uso las funciones que comienzan con underscore en las funciones que no sean las mismas para que empiecen de root
+# pero bueno igual no tenía sentido implementarlo de otra manera
+
     def _in_order(self, node):
         if not node:
             return
