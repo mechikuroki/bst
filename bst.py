@@ -1,42 +1,51 @@
 from nodo import Node
 
-#por como hice el árbol se fuerza que haya una root
-
 class BinarySearchTree:
     def __init__(self):
         self.root = None
 
-    def add(self, data, node):
-        if not self.root:
+    def add(self, data, node=None):
+        if self.root is None:
             self.root = Node(data)
-            return
-        if not node:
-            return Node(data)
-        if node.data > data:
-            node.left = self.add(data, node.left)
+            return self.root
+
+        if node is None:
+            node = self.root
+            
+        if data < node.data:
+            if node.left is None:
+                node.left = Node(data)
+            else:
+                self.add(data, node.left)
         else:
-            node.right = self.add(data, node.right)
+            if node.right is None:
+                node.right = Node(data)
+            else:
+                self.add(data, node.right)
         return node
 
     def find_min(self, node):
-        if node.left == None:
+        if node is None:
+            return None
+        if node.left is None:
             return node.data
         return self.find_min(node.left)
 
     def find_max(self, node):
-        if node.right == None:
+        if node is None:
+            return None
+        if node.right is None:
             return node.data
         return self.find_max(node.right)
 
     def _not_has_child(self, node):
-        if not node.right and not node.left:
-            return True
-        else: 
-            return False
+        return not node.right and not node.left
 
     def find(self, data, node=None):
         if node is None:
             node = self.root
+        if node is None:
+            return "Not found"
         if node.data == data:
             return node
         elif self._not_has_child(node):
@@ -47,74 +56,85 @@ class BinarySearchTree:
             return self.find(data, node.right)
 
     def _find_with_parent(self, data, node, parent=None, is_left=None):
+        if node is None:
+            return None, None, None
         if node.data == data:
             return node, parent, is_left
-        elif self._not_has_child(node):
-            return None
         elif node.data > data:
             return self._find_with_parent(data, node.left, node, True)
         else:
             return self._find_with_parent(data, node.right, node, False)
- 
+
     def _count_children(self, node):
         children = 0
         if node.left:
             children += 1
-        if node.right:
+        if node.right: 
             children += 1
         return children
 
-     def _find_min_remove(self, node, parent=None):
-        if node.left == None:
-            node_copy = node
-            parent.left = None
-            return node_copy
-        return self.find_min(node.left, node)
-
-   
     def remove(self, data):
-        try:
-            node, parent, is_left = _find_with_parent(data, self.root)
-        except:
+        node, parent, is_left = self._find_with_parent(data, self.root)
+        if node is None:
             return "Not found"
-        children = _count_children(node)
+
+        children = self._count_children(node)
+        is_root = (parent is None)
+
         match children:
             case 0:
-                if is_left:
-                    parent.left = None
-                    del node
-                    return
+                if is_root:
+                    self.root = None
                 else:
-                    parent.right = None
-                    del node
-                    return
-            case 1:
-                is_child_left = True if node.left else False
-                if is_left:
-                    if is_child_left:
-                        parent.left = node.left
-                    else:
-                        parent.left = node.right
-                else:
-                    if is_child_left:
-                        parent.left = node.left
-                    else:
-                        parent.left = node.right
-            case 2:
-                new = _find_min_remove(node.right)
-                if is_left:
-                    parent.left = new
+                    if is_left: parent.left = None
+                    else: parent.right = None
+                del node
+                return "Done"
 
-            
+            case 1:
+                child = node.left if node.left else node.right
+                if is_root:
+                    self.root = child
+                else:
+                    if is_left: parent.left = child
+                    else: parent.right = child
+                del node
+                return "Done"
+
+            case 2:
+                next_node_parent = node
+                next_node = node.right
+                while next_node.left is not None:
+                    next_node_parent = next_node
+                    next_node = next_node.left
+
+                if next_node_parent != node:
+                    next_node_parent.left = next_node.right
+                else:
+                    next_node_parent.right = next_node.right
+
+                if is_root:
+                    self.root = next_node
+                elif is_left:
+                    parent.left = next_node
+                else:
+                    parent.right = next_node
+
+                next_node.left = node.left
+                next_node.right = node.right
+                del node
+                return "Done"
 
 bst = BinarySearchTree()
-bst.add(3, bst.root)
-bst.add(6, bst.root)
-bst.add(14, bst.root)
-bst.add(2, bst.root)
+bst.add(3)
+bst.add(6)
+bst.add(14)
+bst.add(2)
 
-print(bst.find_max(bst.root))
-print(bst.find_min(bst.root))
-print(bst.find(3, bst.root))
-print(bst.find(50, bst.root))
+print(bst.find_max(bst.root))  
+print(bst.find_min(bst.root)) 
+print(bst.find(3))           
+print(bst.find(50))       
+print(bst.remove(3))     
+print(bst.remove(14))   
 
