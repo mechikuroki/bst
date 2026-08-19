@@ -24,19 +24,35 @@ class BinarySearchTree:
                 self.add(data, node.right)
         return node
 
-    def find_min(self, node):
+    def _in_order(self, node):
+        if not node:
+            return
+        self._in_order(node.left)
+        print(node.data)
+        self._in_order(node.right)
+    
+    def in_order(self):
+        return self._in_order(self.root)
+
+    def _find_min(self, node):
         if node is None:
             return None
         if node.left is None:
             return node.data
-        return self.find_min(node.left)
+        return self._find_min(node.left)
+    
+    def find_min(self):
+        return self._find_min(self.root)
 
-    def find_max(self, node):
+    def _find_max(self, node):
         if node is None:
             return None
         if node.right is None:
             return node.data
-        return self.find_max(node.right)
+        return self._find_max(node.right)
+
+    def find_max(self):
+        return self._find_max(self.root)
 
     def _not_has_child(self, node):
         return not node.right and not node.left
@@ -130,12 +146,13 @@ def main():
     bst.add(6)
     bst.add(14)
     bst.add(2)
-
-    print(bst.find_max(bst.root))  
-    print(bst.find_min(bst.root)) 
+    bst.in_order()
+    print()
+    print(bst.find_max())  
+    print(bst.find_min()) 
     print(bst.find(3))           
     print(bst.find(50))       
     print(bst.remove(3))     
     print(bst.remove(14))   
-
+    bst.in_order()
 main()
